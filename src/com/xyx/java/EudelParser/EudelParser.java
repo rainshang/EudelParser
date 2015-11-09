@@ -27,6 +27,7 @@ public class EudelParser {
 	 */
 	public static void main(String[] args) {
 		com.xyx.java.parseITjuzi.Parser.parse();
+		// com.xyx.java.parse36Kr.Parser.parse();
 	}
 
 }
