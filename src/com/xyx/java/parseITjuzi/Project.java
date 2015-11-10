@@ -1,10 +1,6 @@
 package com.xyx.java.parseITjuzi;
 
-import java.text.SimpleDateFormat;
-
 public class Project {
-	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy.MM");
-
 	public int projectId;
 	public String projectName;
 	public String projectBrief;
@@ -59,11 +55,10 @@ public class Project {
 		public String name;
 		public String type;
 
-		// https://rong.36kr.com/api/user/53366/basic
 		public String allIntro;
 		public String[] tags;
 
-		public PersonCompanyExp[] companyExps;// https://rong.36kr.com/api/user/53366/company
+		public PersonCompanyExp[] companyExps;
 
 		public Person(String name, String type, String allIntro, String[] tags) {
 			this.name = name;
