@@ -10,19 +10,24 @@ public class Project {
 	public String projectBrief;
 	public String projectCompany;
 	public String projectIndustry;
-	public String projectIntro;
-	public String projectStory;
 	public String projectWebsite;
-	public int[] projectAddressCodes;
+	public String projectLocation;
 
 	public String projectFundPhase;
-	public String projectFundValue;
-	public String projectFundUnit;
 
 	public PastFinance[] pastFinances;
-	public PastInvestor[] pastInvestors;
 	public Person[] founders;
-	public Person[] employees;
+
+	public Project(int projectId, String projectName, String projectBrief, String projectCompany, String projectIndustry, String projectWebsite, String projectLocation, String projectFundPhase) {
+		this.projectId = projectId;
+		this.projectName = projectName;
+		this.projectBrief = projectBrief;
+		this.projectCompany = projectCompany;
+		this.projectIndustry = projectIndustry;
+		this.projectWebsite = projectWebsite;
+		this.projectLocation = projectLocation;
+		this.projectFundPhase = projectFundPhase;
+	}
 
 	/**
 	 * 融资经历
@@ -31,25 +36,17 @@ public class Project {
 	 * 
 	 */
 	public class PastFinance {
-		public long dateL;
+		public String date;
 		public String phase;
 		public String financeAmount;
-		public String financeAmountUnit;
-		public String valuation;
-		public String valuationUnit;
 		public String[] participants;
-	}
 
-	/**
-	 * 过往资方
-	 * 
-	 * @author rainshang
-	 * 
-	 */
-	public class PastInvestor {
-		public String name;
-		public String brief;
-
+		public PastFinance(String date, String phase, String financeAmount, String[] participants) {
+			this.date = date;
+			this.phase = phase;
+			this.financeAmount = financeAmount;
+			this.participants = participants;
+		}
 	}
 
 	/**
@@ -59,34 +56,37 @@ public class Project {
 	 * 
 	 */
 	public class Person {
-		public int id;
 		public String name;
-		public String nickName;
 		public String type;
-		public String intro;
 
 		// https://rong.36kr.com/api/user/53366/basic
 		public String allIntro;
 		public String[] tags;
 
 		public PersonCompanyExp[] companyExps;// https://rong.36kr.com/api/user/53366/company
-		public PersonWorkExp[] workExps;// https://rong.36kr.com/api/user/53366/work
+
+		public Person(String name, String type, String allIntro, String[] tags) {
+			this.name = name;
+			this.type = type;
+			this.allIntro = allIntro;
+			this.tags = tags;
+		}
 
 		public class PersonCompanyExp {
 			public String groupName;
 			public String brief;
 			public String positionString;
-			public long startDateL, endDateL;
+			public String date;
+
+			public PersonCompanyExp(String groupName, String brief, String positionString, String date) {
+				this.groupName = groupName;
+				this.brief = brief;
+				this.positionString = positionString;
+				this.date = date;
+			}
 
 		}
 
-		public class PersonWorkExp {
-			public String groupName;
-			public String positionString;
-			public String positionDetail;
-			public long startDateL, endDateL;
-
-		}
 	}
 
 }
