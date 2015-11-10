@@ -79,6 +79,9 @@ public class Parser {
 		String industry = null;
 		while (currentPageIndex <= pageCount) {
 			Document document = PARSER.httpGet2Document(String.format(formatUrl, currentPageIndex));
+			if (document == null) {
+				continue;
+			}
 			Element element = document.select("div[class=\"normal-box-no-pad follow-area\"]").get(0);
 			if (industry == null) {
 				industry = element.child(0).select("li[class=\"active\"]").get(0).text();
@@ -95,6 +98,9 @@ public class Parser {
 				String idUrl = companyElement.child(2).attr("href");
 
 				document = PARSER.httpGet2Document(idUrl);
+				if (document == null) {
+					continue;
+				}
 				// element = document.select("div[class=\"normal-box clearfix\"]").get(0);
 				// element = element.child(1);
 				// String website = element.child(0).child(1).text();
@@ -167,6 +173,9 @@ public class Parser {
 						String founderType = founderElement.child(2).text();
 
 						document = httpGet2Document(founderUrl);
+						if (document == null) {
+							continue;
+						}
 						element = document.select("article[class=\"two-col-big-left\"]").get(0);
 						Elements founderAllIntroElements = element.child(0).child(0).child(1).child(0).children();
 						String founderAllIntro = founderAllIntroElements.get(founderAllIntroElements.size() - 1).child(0).text();
@@ -186,11 +195,15 @@ public class Parser {
 							String positionString = sss[sss.length - 1];
 							String companyExpUrl = companyExpElement.child(1).child(0).child(0).attr("href");
 							String companyExpDate = "";
-							for (Element dateElement : httpGet2Document(companyExpUrl).select("ul[class=\"detail-info\"]").get(0).children()) {
-								String[] titleContent = dateElement.text().split(":");
-								if ("时间".equals(titleContent[0])) {
-									companyExpDate = titleContent[1];
+							try {
+								for (Element dateElement : httpGet2Document(companyExpUrl).select("ul[class=\"detail-info\"]").get(0).children()) {
+									String[] titleContent = dateElement.text().split(":");
+									if ("时间".equals(titleContent[0])) {
+										companyExpDate = titleContent[1];
+									}
 								}
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
 							person.companyExps[j] = person.new PersonCompanyExp(companyExpName, companyExpBrief, positionString, companyExpDate);
 						}
@@ -316,31 +329,35 @@ public class Parser {
 			int founderInLine = projectInLine;
 			if (project.founders != null) {
 				for (Person founder : project.founders) {
-					label = new Label(4, founderInLine, founder.name);
-					sheet.addCell(label);
-					Number number = new Number(9, founderInLine, founder.companyExps.length);
-					sheet.addCell(number);
-					// label = new Label(10, founderInLine, founder.getWorkExps());
-					// sheet.addCell(label);
-
-					int companyExpInLine = founderInLine;
-					for (PersonCompanyExp companyExp : founder.companyExps) {
-						label = new Label(5, companyExpInLine, companyExp.groupName + "，" + companyExp.brief);
+					if (founder != null) {
+						label = new Label(4, founderInLine, founder.name);
 						sheet.addCell(label);
-						label = new Label(6, companyExpInLine, companyExp.positionString);
-						sheet.addCell(label);
-						label = new Label(7, companyExpInLine, companyExp.date);
-						sheet.addCell(label);
-						// label = new Label(8, companyExpInLine, project.getDate(companyExp.endDateL));
+						Number number = new Number(9, founderInLine, founder.companyExps.length);
+						sheet.addCell(number);
+						// label = new Label(10, founderInLine, founder.getWorkExps());
 						// sheet.addCell(label);
-						companyExpInLine++;
+
+						int companyExpInLine = founderInLine;
+						for (PersonCompanyExp companyExp : founder.companyExps) {
+							label = new Label(5, companyExpInLine, companyExp.groupName + "，" + companyExp.brief);
+							sheet.addCell(label);
+							label = new Label(6, companyExpInLine, companyExp.positionString);
+							sheet.addCell(label);
+							label = new Label(7, companyExpInLine, companyExp.date);
+							sheet.addCell(label);
+							// label = new Label(8, companyExpInLine, project.getDate(companyExp.endDateL));
+							// sheet.addCell(label);
+							companyExpInLine++;
+						}
+						if (companyExpInLine > founderInLine + 1) {
+							sheet.mergeCells(4, founderInLine, 4, companyExpInLine - 1);
+							sheet.mergeCells(9, founderInLine, 9, companyExpInLine - 1);
+							sheet.mergeCells(10, founderInLine, 10, companyExpInLine - 1);
+						}
+						founderInLine = companyExpInLine;
+					} else {
+						founderInLine++;
 					}
-					if (companyExpInLine > founderInLine + 1) {
-						sheet.mergeCells(4, founderInLine, 4, companyExpInLine - 1);
-						sheet.mergeCells(9, founderInLine, 9, companyExpInLine - 1);
-						sheet.mergeCells(10, founderInLine, 10, companyExpInLine - 1);
-					}
-					founderInLine = companyExpInLine;
 				}
 			} else {
 				founderInLine++;
