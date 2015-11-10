@@ -185,7 +185,14 @@ public class Parser {
 							String[] sss = companyExpElement.child(1).child(0).text().split(" ");
 							String positionString = sss[sss.length - 1];
 							String companyExpUrl = companyExpElement.child(1).child(0).child(0).attr("href");
-							person.companyExps[j] = person.new PersonCompanyExp(companyExpName, companyExpBrief, positionString, date);
+							String companyExpDate = "";
+							for (Element dateElement : httpGet2Document(companyExpUrl).select("ul[class=\"detail-info\"]").get(0).children()) {
+								String[] titleContent = dateElement.text().split(":");
+								if ("时间".equals(titleContent[0])) {
+									companyExpDate = titleContent[1];
+								}
+							}
+							person.companyExps[j] = person.new PersonCompanyExp(companyExpName, companyExpBrief, positionString, companyExpDate);
 						}
 						project.founders[i] = person;
 					}
@@ -195,6 +202,9 @@ public class Parser {
 				// break;
 				// }
 			}
+			// if (projects.size() == 10) {
+			// break;
+			// }
 			currentPageIndex++;
 		}
 	}
@@ -332,6 +342,8 @@ public class Parser {
 					}
 					founderInLine = companyExpInLine;
 				}
+			} else {
+				founderInLine++;
 			}
 
 			if (founderInLine > projectInLine + 1) {
